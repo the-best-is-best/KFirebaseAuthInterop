@@ -1,21 +1,42 @@
 // swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
     name: "KFirebaseAuthInterop",
+    platforms: [.iOS(.v13), .macOS(.v10_15)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "KFirebaseAuthInterop",
-            targets: ["KFirebaseAuthInterop"]),
+            type: .dynamic,
+            targets: ["KFirebaseAuthInterop"]
+        ),
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            from: "11.9.0"
+        ),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "KFirebaseAuthInterop"),
-
+            name: "KFirebaseAuthInterop",
+            dependencies: [
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+            ],
+            path: "Sources",
+            exclude: ["Info.plist"],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx),  // For better Obj-C interop
+                .unsafeFlags([
+                    "-emit-objc-header",
+                    "-emit-objc-header-path",
+                    "./Headers/KFirebaseAuthInterop-Swift.h"
+                ])
+            ],
+            linkerSettings: [
+                .linkedFramework("Foundation"),
+                .linkedFramework("UIKit", .when(platforms: [.iOS])),
+            ]
+        )
     ]
 )
