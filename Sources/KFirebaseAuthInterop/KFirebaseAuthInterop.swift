@@ -212,7 +212,6 @@ public class KFirebaseAuthInterop: NSObject {
         onCodeSent: @escaping (_ verificationId: String) -> Void,
         onCodeSentFailed: @escaping (_ error: NSError) -> Void
     ) {
-        
         PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
             if let error = error {
                 onCodeSentFailed(error as? NSError ?? NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
@@ -221,6 +220,8 @@ public class KFirebaseAuthInterop: NSObject {
             
             if let verificationID = verificationID {
                 onCodeSent(verificationID)
+            } else {
+                onCodeSentFailed(NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Verification ID is nil"]))
             }
         }
     }
@@ -231,11 +232,14 @@ public class KFirebaseAuthInterop: NSObject {
         onVerificationCompleted: @escaping (_ user: UserModel) -> Void,
         onVerificationFailed: @escaping (_ error: NSError) -> Void
     ) {
-        let credential = PhoneAuthProvider.provider().credential(
+        guard let credential = PhoneAuthProvider.provider().credential(
             withVerificationID: verificationId,
             verificationCode: otpCode
-        )
-        
+        ) else {
+            onVerificationFailed(NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid credential"]))
+            return
+        }
+
         Auth.auth().signIn(with: credential) { authResult, error in
             if let error = error {
                 onVerificationFailed(error as NSError)
