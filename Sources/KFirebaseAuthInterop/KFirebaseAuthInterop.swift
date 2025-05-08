@@ -252,5 +252,93 @@ public class KFirebaseAuthInterop: NSObject {
         }
 
     }
+    
+    @objc public func linkProvider(credentials: AuthCredentials, completion: @escaping (UserModel?, NSError?) -> Void) {
+        switch credentials.provider {
+        case .google:
+            linkWithGoogle(idToken: credentials.idToken, accessToken: credentials.accessToken, completion: completion)
+        case .facebook:
+            linkWithFacebook(idToken: credentials.idToken, accessToken: credentials.accessToken, completion: completion)
+        }
+    }
+    
+    private func linkWithGoogle(idToken: String, accessToken: String, completion: @escaping (UserModel?, NSError?) -> Void) {
+            guard let currentUser = Auth.auth().currentUser else {
+                completion(nil, NSError(domain: "FirebaseAuth", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user"]))
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+            
+            currentUser.link(with: credential) { authResult, error in
+                if let error = error {
+                    completion(nil, error as NSError)
+                } else {
+                    let userModel = fromFirebaseUser(authResult!.user)
+                    completion(userModel, nil)
+                }
+            }
+        }
+        
+        // Link current Firebase user with Facebook provider
+    private func linkWithFacebook(idToken: String, accessToken: String, completion: @escaping (UserModel?, NSError?) -> Void) {
+        guard let currentUser = Auth.auth().currentUser else {
+            completion(nil, NSError(domain: "FirebaseAuth", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user"]))
+            return
+        }
+        
+        let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+        
+        currentUser.link(with: credential) { authResult, error in
+            if let error = error {
+                completion(nil, error as NSError)
+            } else {
+                let userModel = fromFirebaseUser(authResult!.user)
+                completion(userModel, nil)
+            }
+        }
+    }
+
+    
+    @objc public func signInWithCredential(credentials: AuthCredentials, completion: @escaping (UserModel?, NSError?) -> Void) {
+            switch credentials.provider {
+            case .google:
+                signInWithGoogle(idToken: credentials.idToken, accessToken: credentials.accessToken, completion: completion)
+            case .facebook:
+                signInWithFacebook(idToken: credentials.idToken, accessToken: credentials.accessToken, completion: completion)
+                
+            }
+        }
+    
+
+        private func signInWithGoogle(idToken: String, accessToken: String, completion: @escaping (UserModel?, NSError?) -> Void) {
+            // Example of Google Sign-In using Firebase
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    completion(nil, error as NSError)
+                } else {
+                    // Assuming fromFirebaseUser is a function that converts FirebaseUser to UserModel
+                    let userModel = fromFirebaseUser(authResult!.user)
+                    completion(userModel, nil)
+                }
+            }
+        }
+
+        private func signInWithFacebook(idToken: String, accessToken: String, completion: @escaping (UserModel?, NSError?) -> Void) {
+            // Example of Facebook Sign-In using Firebase
+            let credential = FacebookAuthProvider.credential(withAccessToken: accessToken)
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    completion(nil, error as NSError)
+                } else {
+                    let userModel = fromFirebaseUser(authResult!.user)
+                    completion(userModel, nil)
+                }
+            }
+        }
+    
+  
+
 
 }

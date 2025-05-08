@@ -23,14 +23,14 @@ let package = Package(
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
             ],
             path: "Sources",
-//            swiftSettings: [
-//                .interoperabilityMode(.Cxx),  // For better Obj-C interop
-//                .unsafeFlags([
-//                    "-emit-objc-header",
-//                    "-emit-objc-header-path",
-//                    "./Headers/KFirebaseAuthInterop-Swift.h"
-//                ])
-//            ],
+//           swiftSettings: [
+//               .interoperabilityMode(.Cxx),  // For better Obj-C interop
+//               .unsafeFlags([
+//                   "-emit-objc-header",
+//                   "-emit-objc-header-path",
+//                   "./Headers/KFirebaseAuthInterop-Swift.h"
+//               ])
+//           ],
             linkerSettings: [
                 .linkedFramework("Foundation"),
                 .linkedFramework("UIKit", .when(platforms: [.iOS])),
