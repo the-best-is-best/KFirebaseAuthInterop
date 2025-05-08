@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -7,7 +7,6 @@ let package = Package(
     products: [
         .library(
             name: "KFirebaseAuthInterop",
-            type: .dynamic,
             targets: ["KFirebaseAuthInterop"]
         ),
     ],
@@ -24,7 +23,6 @@ let package = Package(
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
             ],
             path: "Sources",
-            exclude: ["Info.plist"],
             swiftSettings: [
                 .interoperabilityMode(.Cxx),  // For better Obj-C interop
                 .unsafeFlags([
