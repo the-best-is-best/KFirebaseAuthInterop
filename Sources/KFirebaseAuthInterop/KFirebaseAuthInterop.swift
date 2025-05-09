@@ -3,7 +3,7 @@
 import Foundation
 import FirebaseAuth
 import Firebase
-
+import FirebaseCore
 
 @objc
 public class KFirebaseAuthInterop: NSObject {
@@ -12,8 +12,13 @@ public class KFirebaseAuthInterop: NSObject {
     public override init() {
         super.init()
     }
+    
     private var authStateListenerHandle: AuthStateDidChangeListenerHandle?
     private var idTokenChangedListenerHandle: AuthStateDidChangeListenerHandle?
+    
+    @objc public func getClientId(completion: @escaping (String?) -> Void){
+        completion(FirebaseApp.app()?.options.clientID)
+    }
 
     @objc public func addListenerAuthStateChange(completion: @escaping (UserModel?) -> Void) {
         authStateListenerHandle = Auth.auth().addStateDidChangeListener { auth, user in
