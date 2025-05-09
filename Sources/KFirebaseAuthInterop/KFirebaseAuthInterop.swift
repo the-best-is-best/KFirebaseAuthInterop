@@ -343,7 +343,34 @@ public class KFirebaseAuthInterop: NSObject {
             }
         }
     
-  
+    @objc public func sendEmailVerification(completion: @escaping (NSError?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(NSError(domain: "FirebaseAuth", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user"]))
+            return
+        }
+        user.sendEmailVerification { error in
+            if let error = error {
+                completion(error as NSError?)
+                return
+            }
+            
+        }
+    }
+    
+    @objc public func updateEmail(newEmail: String, completion: @escaping (NSError?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(NSError(domain: "FirebaseAuth", code: 0, userInfo: [NSLocalizedDescriptionKey: "No current user"]))
+            return
+        }
+        user.sendEmailVerification(beforeUpdatingEmail: newEmail) { error in
+            if let error = error {
+                completion(error as NSError?)
+                return
+            }
+            
+        }
+    }
+
 
 
 }
