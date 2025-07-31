@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "KFirebaseAuthInterop",
-    platforms: [.iOS(.v13), .macOS(.v10_15)],
+    platforms: [.iOS(.v15), .macOS(.v10_15)],
     products: [
         .library(
             name: "KFirebaseAuthInterop",
@@ -13,7 +13,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/firebase/firebase-ios-sdk.git",
-            from: "11.9.0"
+            from: "12.0.0"
         ),
     ],
     targets: [

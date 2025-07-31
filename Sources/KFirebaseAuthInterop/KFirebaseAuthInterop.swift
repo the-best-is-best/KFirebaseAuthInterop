@@ -219,15 +219,16 @@ public class KFirebaseAuthInterop: NSObject {
     ) {
         PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
             if let error = error {
-                onCodeSentFailed(error as? NSError ?? NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]))
+                onCodeSentFailed(error as NSError)
                 return
             }
             
-            if let verificationID = verificationID {
-                onCodeSent(verificationID)
-            } else {
+            guard let verificationID = verificationID else {
                 onCodeSentFailed(NSError(domain: "FirebaseAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Verification ID is nil"]))
+                return
             }
+            
+            onCodeSent(verificationID)
         }
     }
 
